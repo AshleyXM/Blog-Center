@@ -1,8 +1,8 @@
 import { Layout, Menu, Popconfirm } from "antd";
 import {
   HomeOutlined,
-  DiffOutlined,
-  EditOutlined,
+  ProductOutlined,
+  FileAddOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import "./index.scss";
@@ -19,12 +19,12 @@ const items = [
   {
     label: "My Articles",
     key: "2",
-    icon: <DiffOutlined />,
+    icon: <ProductOutlined />,
   },
   {
     label: "Post a New Article",
     key: "3",
-    icon: <EditOutlined />,
+    icon: <FileAddOutlined />,
   },
 ];
 
