@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import "./index.scss";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { fetchUserInfo } from "@/store/modules/user";
+import { fetchUserInfo, clearUserInfo } from "@/store/modules/user";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 
@@ -52,6 +52,11 @@ const Layout = () => {
 
   const username = useSelector((state) => state.user.userInfo.name);
 
+  const handleLogout = () => {
+    dispatch(clearUserInfo());
+    navigate("/login");
+  };
+
   return (
     <AntdLayout>
       <Header className="header">
@@ -63,6 +68,7 @@ const Layout = () => {
               title="Confirm to exit?"
               okText="Exit"
               cancelText="Cancel"
+              onConfirm={handleLogout}
             >
               <LogoutOutlined /> Exit
             </Popconfirm>
