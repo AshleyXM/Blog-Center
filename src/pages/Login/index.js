@@ -1,6 +1,10 @@
 import "./index.scss";
-import { Card, Form, Input, Button, Select } from "antd";
+import { Card, Form, Input, Button, Select, message } from "antd";
 import logo from "@/assets/logo.png";
+import { useDispatch } from "react-redux";
+import { fetchLogin } from "@/store/modules/user";
+
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -19,13 +23,18 @@ const phonePrefixSelector = (
 );
 
 const Login = () => {
-  const onFinish = (values) => {
-    console.log(
-      "%c [ values ] - row 23: ",
-      "background-color: #3756d4; padding: 4px 8px; border-radius: 2px; font-size: 14px; color: #fff; font-weight: 700;",
-      values
-    );
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const onFinish = async (values) => {
+    // 触发异步action
+    await dispatch(fetchLogin(values));
+
+    // 跳转到首页
+    navigate("/");
+    // 提示用户
+    message.success("Login successfully!");
   };
+
   return (
     <div className="login">
       <Card className="login-container">

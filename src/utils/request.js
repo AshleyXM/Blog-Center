@@ -5,7 +5,7 @@ import axios from "axios";
 // 3. 请求拦截器 / 响应拦截器
 
 const request = axios.create({
-  baseURL: "http://geek.itheima.net/v1_0",
+  baseURL: "http://127.0.0.1:4523/m1/4720333-4372679-default",
   timeout: 5000,
 });
 
