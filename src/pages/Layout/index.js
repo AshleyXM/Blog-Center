@@ -7,6 +7,9 @@ import {
 } from "@ant-design/icons";
 import "./index.scss";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { fetchUserInfo } from "@/store/modules/user";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const { Header, Sider } = AntdLayout;
 
@@ -34,19 +37,28 @@ const Layout = () => {
   const location = useLocation();
   const selectedKey = location.pathname;
 
+  // 触发个人用户信息action
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserInfo());
+  }, [dispatch]);
 
   const handleMenuClick = (route) => {
     const path = route.key;
     navigate(path);
   };
 
+  const username = useSelector((state) => state.user.userInfo.name);
+
   return (
     <AntdLayout>
       <Header className="header">
         <div className="logo" />
         <div className="user-info">
-          <span className="user-name">Ashley</span>
+          <span className="user-name">{username}</span>
           <span className="user-logout">
             <Popconfirm
               title="Confirm to exit?"
