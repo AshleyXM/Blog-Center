@@ -37,12 +37,11 @@ const Layout = () => {
   const location = useLocation();
   const selectedKey = location.pathname;
 
-  // 触发个人用户信息action
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
+    // 触发个人用户信息action
     dispatch(fetchUserInfo());
   }, [dispatch]);
 
@@ -75,7 +74,7 @@ const Layout = () => {
           <Menu
             mode="inline"
             theme="dark"
-            defaultSelectedKeys={["1"]}
+            defaultSelectedKeys={["/"]}
             selectedKeys={selectedKey}
             items={items}
             style={{ height: "100%", borderRight: 0 }}
