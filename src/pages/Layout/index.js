@@ -1,4 +1,4 @@
-import { Layout, Menu, Popconfirm } from "antd";
+import { Layout as AntdLayout, Menu, Popconfirm } from "antd";
 import {
   HomeOutlined,
   ProductOutlined,
@@ -8,7 +8,7 @@ import {
 import "./index.scss";
 import { Outlet } from "react-router-dom";
 
-const { Header, Sider } = Layout;
+const { Header, Sider } = AntdLayout;
 
 const items = [
   {
@@ -28,9 +28,9 @@ const items = [
   },
 ];
 
-const GeekLayout = () => {
+const Layout = () => {
   return (
-    <Layout>
+    <AntdLayout>
       <Header className="header">
         <div className="logo" />
         <div className="user-info">
@@ -46,7 +46,7 @@ const GeekLayout = () => {
           </span>
         </div>
       </Header>
-      <Layout>
+      <AntdLayout>
         <Sider width={200} className="site-layout-background">
           <Menu
             mode="inline"
@@ -56,11 +56,12 @@ const GeekLayout = () => {
             style={{ height: "100%", borderRight: 0 }}
           ></Menu>
         </Sider>
-        <Layout className="layout-content" style={{ padding: 20 }}>
+        <AntdLayout className="layout-content" style={{ padding: 20 }}>
           <Outlet />
-        </Layout>
-      </Layout>
-    </Layout>
+        </AntdLayout>
+      </AntdLayout>
+    </AntdLayout>
   );
 };
-export default GeekLayout;
+
+export default Layout;
