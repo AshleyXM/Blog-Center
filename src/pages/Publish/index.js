@@ -3,10 +3,35 @@ import ReactQuill from "react-quill";
 import { Link } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import "./index.scss";
+import { useEffect, useState } from "react";
+import { getChannelAPI, createArticleAPI } from "@/apis/article";
 
 const { Option } = Select;
 
 const Publish = () => {
+  const [channelList, setChannelList] = useState([]);
+
+  const getChannelList = async () => {
+    const res = await getChannelAPI();
+    setChannelList(res.data);
+  };
+
+  useEffect(() => {
+    getChannelList();
+  }, []);
+
+  const onFinish = (formData) => {
+    // 按照接口文档的格式处理收集到的表单数据
+    const reqData = {
+      ...formData,
+      cover: {
+        type: 0,
+        images: [],
+      },
+    };
+    createArticleAPI(reqData);
+  };
+
   return (
     <div className="publish">
       <Card
@@ -23,6 +48,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
+          onFinish={onFinish}
         >
           <Form.Item
             label="Title"
@@ -47,7 +73,11 @@ const Publish = () => {
               placeholder="Please select your article channel"
               style={{ width: 400 }}
             >
-              <Option value={0}>Art</Option>
+              {channelList.map((item) => (
+                <Option key={item.id} value={item.name}>
+                  {item.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
           <Form.Item
