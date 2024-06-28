@@ -1,4 +1,16 @@
-import { Card, Breadcrumb, Form, Button, Input, Space, Select } from "antd";
+import {
+  Card,
+  Breadcrumb,
+  Form,
+  Button,
+  Radio,
+  Input,
+  Upload,
+  Space,
+  Select,
+  message,
+} from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
 import { Link } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
@@ -21,15 +33,32 @@ const Publish = () => {
   }, []);
 
   const onFinish = (formData) => {
+    if (imageList.length !== imageType) {
+      return message.warning(
+        "The number of uploaded images does not match with the selected mode!"
+      );
+    }
     // 按照接口文档的格式处理收集到的表单数据
     const reqData = {
       ...formData,
       cover: {
-        type: 0,
-        images: [],
+        type: imageType,
+        images: imageList.map((item) => item.response.data.url),
       },
     };
     createArticleAPI(reqData);
+  };
+
+  const [imageType, setImageType] = useState(0);
+
+  const onTypeChange = (e) => {
+    setImageType(e.target.value);
+  };
+
+  const [imageList, setImageList] = useState([]);
+
+  const handleUpload = (value) => {
+    setImageList(value.fileList);
   };
 
   return (
@@ -47,7 +76,7 @@ const Publish = () => {
         <Form
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
-          initialValues={{ type: 1 }}
+          initialValues={{ type: 0 }}
           onFinish={onFinish}
         >
           <Form.Item
@@ -79,6 +108,35 @@ const Publish = () => {
                 </Option>
               ))}
             </Select>
+          </Form.Item>
+          <Form.Item label="Cover">
+            <Form.Item name="type">
+              <Radio.Group onChange={onTypeChange}>
+                <Radio value={1}>One cover</Radio>
+                <Radio value={3}>Three covers</Radio>
+                <Radio value={0}>No cover</Radio>
+              </Radio.Group>
+            </Form.Item>
+            {imageType > 0 && (
+              <Upload
+                listType="picture-card"
+                name="image"
+                action="https://mock.apipark.cn/m1/4720333-4372679-default/upload"
+                onChange={handleUpload}
+                maxCount={imageType}
+              >
+                <div>
+                  <PlusOutlined />
+                  <div
+                    style={{
+                      marginTop: 8,
+                    }}
+                  >
+                    Upload
+                  </div>
+                </div>
+              </Upload>
+            )}
           </Form.Item>
           <Form.Item
             label="Content"
