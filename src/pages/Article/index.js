@@ -12,11 +12,13 @@ import {
 import { Table, Tag, Space } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/error.png";
+import { useChannel } from "@/hooks/useChannel";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const Article = () => {
+  const { channelList } = useChannel();
   const columns = [
     {
       title: "Cover",
@@ -109,13 +111,12 @@ const Article = () => {
           </Form.Item>
 
           <Form.Item label="Channel" name="channel_id">
-            <Select
-              placeholder="Please select article channel"
-              defaultValue="lucy"
-              style={{ width: 120 }}
-            >
-              <Option value="jack">Jack</Option>
-              <Option value="lucy">Lucy</Option>
+            <Select placeholder="Please select" style={{ width: 150 }}>
+              {channelList.map((item) => (
+                <Option id={item.id} value={item.name}>
+                  {item.name}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
