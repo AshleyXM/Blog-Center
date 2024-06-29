@@ -7,6 +7,7 @@ import {
   Radio,
   DatePicker,
   Select,
+  Popconfirm,
 } from "antd";
 
 import { Table, Tag, Space } from "antd";
@@ -14,14 +15,14 @@ import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import img404 from "@/assets/error.png";
 import { useChannel } from "@/hooks/useChannel";
 import { useEffect, useState } from "react";
-import { getArticleListAPI } from "@/apis/article";
+import { deleteArticleAPI, getArticleListAPI } from "@/apis/article";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const STATUS = {
   0: "Draft",
-  1: "Being reviewed",
+  1: "In Review",
   2: "Published",
 };
 
@@ -68,25 +69,35 @@ const columns = [
     title: "Count of Likes",
     dataIndex: "like_count",
   },
-  {
-    title: "Action",
-    render: (data) => {
-      return (
-        <Space size="middle">
-          <Button type="primary" shape="circle" icon={<EditOutlined />} />
-          <Button
-            type="primary"
-            danger
-            shape="circle"
-            icon={<DeleteOutlined />}
-          />
-        </Space>
-      );
-    },
-  },
 ];
 
 const Article = () => {
+  const TABLE_COLUMNS = [
+    ...columns,
+    {
+      title: "Action",
+      render: (row) => {
+        return (
+          <Space size="middle">
+            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Popconfirm
+              title="Confirm to delete this article?"
+              onConfirm={() => handleArticleDelete(row.id)}
+              okText="Yes"
+              cancelText="Cancel"
+            >
+              <Button
+                type="primary"
+                danger
+                shape="circle"
+                icon={<DeleteOutlined />}
+              />
+            </Popconfirm>
+          </Space>
+        );
+      },
+    },
+  ];
   const { channelList } = useChannel();
 
   const [articleList, setArticleList] = useState([]);
@@ -126,6 +137,13 @@ const Article = () => {
       ...reqData,
       page,
     });
+  };
+
+  const handleArticleDelete = async (id) => {
+    await deleteArticleAPI(id);
+    setReqData({
+      ...reqData,
+    }); // 注意这里不能写成setReqData(reqData)，因为这样写引用没有更新，不会触发re-render
   };
 
   return (
@@ -192,7 +210,7 @@ const Article = () => {
       </Card>
       <Card title={`${count} results in total found per the filter condition:`}>
         <Table
-          columns={columns}
+          columns={TABLE_COLUMNS}
           dataSource={articleList}
           pagination={{
             total: count,
