@@ -16,7 +16,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import "./index.scss";
 import { useEffect, useState } from "react";
-import { createArticleAPI, getArticleDetailAPI } from "@/apis/article";
+import {
+  createArticleAPI,
+  getArticleDetailAPI,
+  updateArticleAPI,
+} from "@/apis/article";
 import { useChannel } from "@/hooks/useChannel";
 
 const { Option } = Select;
@@ -38,10 +42,21 @@ const Publish = () => {
       ...formData,
       cover: {
         type: imageType,
-        images: imageList.map((item) => item.response.data.url),
+        images: imageList.map((item) => {
+          if (item.response) {
+            return item.response.data.url;
+          } else {
+            return item.url;
+          }
+        }),
       },
     };
-    createArticleAPI(reqData);
+
+    if (articleId) {
+      updateArticleAPI(articleId, reqData);
+    } else {
+      createArticleAPI(reqData);
+    }
   };
 
   const [imageType, setImageType] = useState(0);
@@ -62,10 +77,24 @@ const Publish = () => {
   useEffect(() => {
     async function getArticleDetail(articleId) {
       const res = await getArticleDetailAPI(articleId);
-      form.setFieldsValue(res.data);
+      const { data } = res;
+      const { cover } = data;
+      form.setFieldsValue({
+        ...data,
+        type: cover.type,
+      });
+      // 重新这是imageType，使得上传按钮可以正确地显示
+      setImageType(cover.type);
+      // 回显图片
+      setImageList(
+        cover.images.map((url) => {
+          return { url };
+        })
+      );
     }
-
-    getArticleDetail(articleId);
+    if (articleId) {
+      getArticleDetail(articleId);
+    }
   }, [articleId, form]);
 
   return (
@@ -75,7 +104,11 @@ const Publish = () => {
           <Breadcrumb
             items={[
               { title: <Link to={"/"}>Home</Link> },
-              { title: "Post a New Article" },
+              {
+                title: `${
+                  articleId ? "Edit the Article" : "Post a New Article"
+                }`,
+              },
             ]}
           />
         }
@@ -132,6 +165,7 @@ const Publish = () => {
                 action="https://mock.apipark.cn/m1/4720333-4372679-default/upload"
                 onChange={handleUpload}
                 maxCount={imageType}
+                fileList={imageList}
               >
                 <div>
                   <PlusOutlined />
@@ -163,7 +197,7 @@ const Publish = () => {
           <Form.Item wrapperCol={{ offset: 4 }}>
             <Space>
               <Button size="large" type="primary" htmlType="submit">
-                Publish
+                {articleId ? "Modify" : "Publish"}
               </Button>
             </Space>
           </Form.Item>

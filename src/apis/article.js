@@ -41,3 +41,12 @@ export function getArticleDetailAPI(id) {
     method: "GET",
   });
 }
+
+// 修改文章
+export function updateArticleAPI(id, data) {
+  return request({
+    url: `/mp/articles/${id}?draft=false`,
+    method: "PUT",
+    data,
+  });
+}
