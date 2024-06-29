@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Card,
   Breadcrumb,
@@ -72,6 +72,7 @@ const columns = [
 ];
 
 const Article = () => {
+  const navigate = useNavigate();
   const TABLE_COLUMNS = [
     ...columns,
     {
@@ -79,7 +80,12 @@ const Article = () => {
       render: (row) => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<EditOutlined />}
+              onClick={() => navigate(`/publish?id=${row.id}`)}
+            />
             <Popconfirm
               title="Confirm to delete this article?"
               onConfirm={() => handleArticleDelete(row.id)}

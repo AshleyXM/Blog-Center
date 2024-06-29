@@ -34,7 +34,7 @@ const BarChart = ({ title }) => {
 
     // 4. 使用图表，并完成图表的渲染
     myChart.setOption(option);
-  }, []);
+  }, [title]);
 
   return <div ref={chartRef} style={{ width: "500px", height: "400px" }}></div>;
 };

@@ -12,11 +12,11 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ReactQuill from "react-quill";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "react-quill/dist/quill.snow.css";
 import "./index.scss";
-import { useState } from "react";
-import { createArticleAPI } from "@/apis/article";
+import { useEffect, useState } from "react";
+import { createArticleAPI, getArticleDetailAPI } from "@/apis/article";
 import { useChannel } from "@/hooks/useChannel";
 
 const { Option } = Select;
@@ -24,6 +24,8 @@ const { Option } = Select;
 const Publish = () => {
   // get channel list via useChannel hook
   const { channelList } = useChannel();
+
+  const [form] = Form.useForm();
 
   const onFinish = (formData) => {
     if (imageList.length !== imageType) {
@@ -54,6 +56,18 @@ const Publish = () => {
     setImageList(value.fileList);
   };
 
+  const [searchParams] = useSearchParams();
+  const articleId = searchParams.get("id");
+
+  useEffect(() => {
+    async function getArticleDetail(articleId) {
+      const res = await getArticleDetailAPI(articleId);
+      form.setFieldsValue(res.data);
+    }
+
+    getArticleDetail(articleId);
+  }, [articleId, form]);
+
   return (
     <div className="publish">
       <Card
@@ -67,6 +81,7 @@ const Publish = () => {
         }
       >
         <Form
+          form={form}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
