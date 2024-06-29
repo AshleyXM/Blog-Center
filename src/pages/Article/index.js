@@ -19,10 +19,16 @@ import { getArticleListAPI } from "@/apis/article";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-const status = {
-  0: <Tag color="error">Draft</Tag>,
-  1: <Tag color="warning">Being reviewed</Tag>,
-  2: <Tag color="success">Published</Tag>,
+const STATUS = {
+  0: "Draft",
+  1: "Being reviewed",
+  2: "Published",
+};
+
+const STATUS_TAGS = {
+  0: <Tag color="error">{STATUS[0]}</Tag>,
+  1: <Tag color="warning">{STATUS[1]}</Tag>,
+  2: <Tag color="success">{STATUS[2]}</Tag>,
 };
 
 const columns = [
@@ -44,7 +50,7 @@ const columns = [
   {
     title: "Status",
     dataIndex: "status",
-    render: (type) => status[type],
+    render: (type) => STATUS_TAGS[type],
   },
   {
     title: "Publication Date",
@@ -85,15 +91,42 @@ const Article = () => {
 
   const [articleList, setArticleList] = useState([]);
   const [count, setCount] = useState(0);
+
+  const [reqData, setReqData] = useState({
+    status: "",
+    channel_id: "",
+    start_pubdate: "",
+    end_pubdate: "",
+    page: 1,
+    pageSize: 10,
+  });
+
   useEffect(() => {
     async function getArticleList() {
-      const res = await getArticleListAPI();
+      const res = await getArticleListAPI(reqData);
       setArticleList(res.data.results);
       setCount(res.data.total);
     }
 
     getArticleList();
-  }, []);
+  }, [reqData]);
+
+  const onFinish = (formData) => {
+    setReqData({
+      ...reqData,
+      status: formData.status,
+      channel_id: formData.channel_id,
+      start_pubdate: formData.date[0].format("YYYY-MM-DD"),
+      end_pubdate: formData.date[1].format("YYYY-MM-DD"),
+    });
+  };
+
+  const onPageChange = (page) => {
+    setReqData({
+      ...reqData,
+      page,
+    });
+  };
 
   return (
     <div>
@@ -108,16 +141,26 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: "" }}>
+        <Form initialValues={{ status: "" }} onFinish={onFinish}>
           <Form.Item label="Status" name="status">
             <Radio.Group>
               <Radio value={""}>All</Radio>
-              <Radio value={0}>Draft</Radio>
-              <Radio value={2}>Published</Radio>
+              <Radio value={0}>{STATUS[0]}</Radio>
+              <Radio value={1}>{STATUS[1]}</Radio>
+              <Radio value={2}>{STATUS[2]}</Radio>
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item label="Channel" name="channel_id">
+          <Form.Item
+            label="Channel"
+            name="channel_id"
+            rules={[
+              {
+                required: true,
+                message: "Please select channel",
+              },
+            ]}
+          >
             <Select placeholder="Please select" style={{ width: 150 }}>
               {channelList.map((item) => (
                 <Option id={item.id} value={item.name}>
@@ -127,7 +170,16 @@ const Article = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Date" name="date">
+          <Form.Item
+            label="Date"
+            name="date"
+            rules={[
+              {
+                required: true,
+                message: "Please pick date range",
+              },
+            ]}
+          >
             <RangePicker></RangePicker>
           </Form.Item>
 
@@ -138,8 +190,17 @@ const Article = () => {
           </Form.Item>
         </Form>
       </Card>
-      <Card title={`${count} Results in Total Found per the Filter Condition:`}>
-        <Table rowKey="id" columns={columns} dataSource={articleList} />
+      <Card title={`${count} results in total found per the filter condition:`}>
+        <Table
+          columns={columns}
+          dataSource={articleList}
+          pagination={{
+            total: count,
+            pageSize: reqData.pageSize,
+            onChange: onPageChange,
+            showSizeChanger: false,
+          }}
+        />
       </Card>
     </div>
   );
