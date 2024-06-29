@@ -1,6 +1,6 @@
 # Introduction
 
-This project was bootstrapped with [CRA](https://github.com/facebook/create-react-app). [CRACO](https://craco.js.org/) was used to add some customized configurations.
+This project was bootstrapped with [CRA](https://github.com/facebook/create-react-app). And [CRACO](https://craco.js.org/) was used to add some customized configurations.
 
 This is a pure front-end project for now. Apifox was used to mock request interface to facilitate the development.
 
@@ -8,8 +8,10 @@ This is a pure front-end project for now. Apifox was used to mock request interf
 
 - React.js
 - React Router
+- Ant Design
 - Redux
 - SASS Styling
+- ECharts
 - Token-based Authentication
 - Lazy Loading Routes
 - CDN Configuration
