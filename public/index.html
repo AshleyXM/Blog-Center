@@ -29,6 +29,10 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- 下面是EJS语法，由webpack动态插入配置好的cdn资源url -->
+    <% htmlWebpackPlugin.options.files.js.forEach(cdnURL => { %>
+    <script src="<%= cdnURL %>"></script>
+    <% }) %>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
