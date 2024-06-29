@@ -26,3 +26,7 @@ cd Blog-Center
 npm i
 npm start
 ```
+
+# Analyze the Package Size after Building
+
+In this project, `source-map-explorer` was utilized to visualize the package size after building the project. All you need to do is to run `npm run analyze` after building the project, then you can check out the visulization of package size, from which you can get a hint of where to start in order to optimize the project.
